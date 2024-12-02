@@ -1,11 +1,63 @@
 import { View, Text, Pressable, StatusBar } from 'react-native'
 import { router } from 'expo-router'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Animatable from 'react-native-animatable'
+import * as LocalAuthentication from 'expo-local-authentication';
 
 export default function Welcome() {
 
-  function handlerLogin(){
-    router.push('/signin')
+async  function handlerLogin(){
+
+	try{
+
+		const user = await AsyncStorage.getItem('@user_data');
+
+		if (user){
+
+			const hasBiometrics = await LocalAuthentication.hasHardwareAsync();
+	
+				  if (!hasBiometrics) {
+					Alert.alert('Erro', 'Seu dispositivo não possui suporte a autenticação biométrica');
+					router.push('/signin'); 
+					return;
+				}
+	
+			const supportedBiometrics = await LocalAuthentication.supportedAuthenticationTypesAsync();
+				if (supportedBiometrics.length === 0) {
+					  Alert.alert('Erro', 'Nenhum método de autenticação biométrica disponível');
+				  router.push('/signin'); 
+					  return;
+				}
+	
+				const isBiometricEnrroled = await LocalAuthentication.isEnrolledAsync()
+				if(!isBiometricEnrroled){
+					Alert.alert('Login', 'Nenhuma digital cadastrada!');
+					router.push('/signin'); 
+					return;
+				}
+	
+			const authResult = await LocalAuthentication.authenticateAsync({
+				promptMessage: 'Autentique-se para continuar',
+				fallbackLabel: 'Usar senha',
+			});
+	
+			if (authResult.success){
+				router.replace({
+					pathname: '/home',
+					params: { usuario: user },
+				});
+			}
+			else{
+				router.push('/signin'); 
+			}                		
+		}
+		else {
+			router.push('/signin'); 
+		}
+
+	}catch (error) {
+         console.error('Erro ao verificar usuário no AsyncStorage:', error);
+    }	
   }
 
   return (

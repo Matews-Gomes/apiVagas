@@ -1,29 +1,57 @@
-const {v4: uuidv4} = require('uuid')
+const bcrypt = require('bcrypt');
 const Usuario =  require('../models/usuario')
 
 async function findById(id){
     try {
-        return await Usuarios.findByPk(id)
+        return await Usuario.findByPk(id)
     } catch (error) {
         throw new Error('Error: Registro não encontrado, ' + error.message); 
     }
 }
 
-async function create({nome, email, password, telefone}){
+async function create({nome, username, email, password, telefone}){
     try {
-        return await Usuario.create({ id: uuidv4(), nome, email, password, telefone})
+
+        const existingname = await Usuario.findOne({ where: { nome } });
+        if (existingname) {
+            throw new Error('Cadastro já está em uso.');
+        }
+
+        const existingUsername = await Usuario.findOne({ where: { username } });
+        if (existingUsername) {
+            throw new Error('Usuário já está em uso.');
+        }
+
+        const existingUser = await Usuario.findOne({ where: { email } });
+        if (existingUser) {
+            throw new Error('Email já está em uso.');
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = await Usuario.create({   
+                nome, 
+                username, 
+                email, 
+                password : hashedPassword, 
+                telefone
+            }) 
+       
+        return newUser
     } catch (error) {
         throw new Error('Error: Não foi possivel criar um novo registro, ' + error.message); 
     }   
 }
 
-async function update(id, {nome, email, password, telefone}){
+async function update(id, {nome, username, email, password, telefone}){
     try {
         const user = await Usuario.findByPk(id)
+        const hashedPassword = await bcrypt.hash(password, 10);
+
         if(user){
-            user.nome = nome,
+            user.nome = nome
+            user.username = username,
             user.email = email,
-            user.password = password,
+            user.password = hashedPassword,
             user.telefone = telefone
 
             await user.save()
