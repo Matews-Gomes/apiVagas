@@ -18,12 +18,16 @@ router.get('/:id', async (req, res) =>{
     }
 })
 
-router.post('/', async (req, res) =>{
+router.post('/register', async (req, res) =>{
     try {
-        const user = await usuarioRepository.create(req.body)
-        res.status(201).json(user)
+        const newUser  = await usuarioRepository.create(req.body)
+        res.status(201).json(newUser)
     } catch (error) {
-        res.status(500).json({error: error.message })
+        if (error.message.includes('já está em uso')) {
+            return res.status(400).json({ error: error.message });
+        }
+
+        res.status(500).json({ error: 'Erro interno do servidor, por favor tente novamente mais tarde.' });
     }
 })
 

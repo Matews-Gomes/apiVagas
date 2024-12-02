@@ -3,12 +3,19 @@ const sequilize = require('../config/database')
 
 const Usuario =  sequilize.define('TB_USUARIO', {
     id: {
-        type: DataTypes.UUIDV4,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true
     },
     nome: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
+    },
+    username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
     },
     email: {
         type: DataTypes.STRING,
