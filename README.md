@@ -95,11 +95,19 @@ http://localhost:3000/api
     "empresa": "Confidencial"
 }
 ```
+
+**Resposta de erro**
+```json
+{
+    "erro": "Vaga não encontrada"
+}
+```
 S
 ## Scripts Disponíveis
 
 - `npm start`: Inicia o servidor.
 - `npm run dev`: Inicia o servidor em modo de desenvolvimento com nodemon.
+- `npm test`: Para rodar os testes.
 
 ## Licença
 
