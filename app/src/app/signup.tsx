@@ -140,5 +140,3 @@ async function handlerAccount(){
 	</KeyboardAvoidingView>  
   )
 }
-
-

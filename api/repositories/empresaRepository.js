@@ -1,4 +1,3 @@
-
 const Empresa =  require('../models/empresa')
 
 async function findAll(){

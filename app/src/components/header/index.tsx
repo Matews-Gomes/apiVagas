@@ -1,7 +1,6 @@
 import { View, Text, Pressable, Alert } from 'react-native'
 import { useState, useEffect } from 'react';
 import { FontAwesome6 } from '@expo/vector-icons'
-import UsuarioProps from '@//interfaces/usuarioInterface'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 
